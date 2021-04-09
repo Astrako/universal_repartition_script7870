@@ -1,0 +1,52 @@
+assert(is_substring("A320", getprop("ro.boot.bootloader")) || is_substring("A600", getprop("ro.boot.bootloader")) || is_substring("G610", getprop("ro.boot.bootloader")) || is_substring("J530", getprop("ro.boot.bootloader")) || is_substring("J701", getprop("ro.boot.bootloader")) || is_substring("J710", getprop("ro.boot.bootloader")) || is_substring("J730", getprop("ro.boot.bootloader")) || is_substring("J600", getprop("ro.boot.bootloader")) || abort(" 	This device is not supported - This ROM only supports A320X, A600X, G610X, J530X, J701X, J710X, J730X, J600X"););
+
+set_progress(0.00);
+	ui_print("........................... ");
+	ui_print(" ");
+	ui_print(" ");
+	ui_print("	Universal 7870 repartition script V1.0");
+	ui_print(" ");
+	ui_print("	done by @Astrako");
+	ui_print(" ");
+	ui_print(" ");
+	ui_print("........................... ");
+
+set_progress(0.2);
+	ui_print(" ");
+	ui_print("	Unmounting partitions");
+		ifelse(is_mounted("/system"), unmount("/system"));
+		ifelse(is_mounted("/vendor"), unmount("/vendor"));
+		ifelse(is_mounted("/cache"), unmount("/cache"));
+		ifelse(is_mounted("/data"), unmount("/data"));
+		ifelse(is_mounted("/odm"), unmount("/odm"));
+	
+set_progress(0.5);
+	ui_print(" ");
+	ui_print("	Executing repartition script");
+		package_extract_file("sgdisk", "/tmp/sgdisk");
+		set_perm(0, 0, 0777, "/tmp/sgdisk");
+		package_extract_file("repartition.sh", "/tmp/repartition.sh");
+		set_perm(0, 0, 0777, "/tmp/repartition.sh");
+		run_program("/tmp/repartition.sh");
+		delete_recursive("/tmp/repartition.sh");
+		ifelse(is_mounted("/system"), unmount("/system"));
+		ifelse(is_mounted("/vendor"), unmount("/vendor"));
+		ifelse(is_mounted("/cache"), unmount("/cache"));
+		ifelse(is_mounted("/data"), unmount("/data"));
+		ifelse(is_mounted("/odm"), unmount("/odm"));
+		format("ext4", "EMMC", "/dev/block/platform/13540000.dwmmc0/by-name/ODM", "0", "/odm");
+
+set_progress(0.9);
+	ui_print(" ");
+	ui_print("	Finished! ");
+	ui_print(" ");
+	ui_print(" ");
+	ui_print("  REBOOTING TO RECOVERY! ");
+	ui_print(" ");
+	ui_print("  REMEMBER TO WIPE SYSTEM, VENDOR, CACHE AND FORMAT DATA NOW! ");
+	ui_print(" ");
+	ui_print(" ");
+	
+set_progress(1.0);
+	run_program("/sbin/sh", "-c", "sleep 5");
+	run_program("/sbin/sh", "-c", "reboot recovery");
