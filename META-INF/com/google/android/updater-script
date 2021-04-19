@@ -23,8 +23,6 @@ set_progress(0.2);
 set_progress(0.5);
 	ui_print(" ");
 	ui_print("	Executing repartition script");
-		package_extract_file("sgdisk", "/tmp/sgdisk");
-		set_perm(0, 0, 0777, "/tmp/sgdisk");
 		package_extract_file("repartition.sh", "/tmp/repartition.sh");
 		set_perm(0, 0, 0777, "/tmp/repartition.sh");
 		run_program("/tmp/repartition.sh");
